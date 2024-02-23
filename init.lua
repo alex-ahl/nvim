@@ -83,5 +83,8 @@ require 'cmp-setup'
 --  nvim-tree
 require '_nvim-tree'
 
+-- nvim-web-devicons 
+require '_nvim-web-devicons'
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
