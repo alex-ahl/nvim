@@ -20,6 +20,20 @@ return {
           ['\\'] = 'close_window',
         },
       },
+      filtered_items = {
+        visible = false,
+        hide_dotfiles = false,
+        hide_gitignored = true,
+        hide_by_name = {
+          'node_modules',
+          'obj',
+          'bin',
+        },
+        always_show_by_pattern = { -- uses glob style patterns
+          '.env*',
+          'Directory.build.props',
+        },
+      },
     },
   },
 }
