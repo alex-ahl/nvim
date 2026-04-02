@@ -15,6 +15,7 @@ return {
   },
   opts = {
     filesystem = {
+      follow_current_file = { enabled = true },
       window = {
         mappings = {
           ['\\'] = 'close_window',
@@ -31,7 +32,7 @@ return {
         },
         always_show_by_pattern = { -- uses glob style patterns
           '.env*',
-          'Directory.build.props',
+          'Directory.Build.props',
         },
       },
     },

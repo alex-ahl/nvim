@@ -11,6 +11,11 @@ return {
     -- "nvim-mini/mini.pick",           -- optional
     -- "folke/snacks.nvim",             -- optional
   },
+  config = {
+    integrations = {
+      diffview = true,
+    },
+  },
   cmd = 'Neogit',
   keys = {
     { '<leader>gg', '<cmd>Neogit<cr>', desc = 'Show Neogit UI' },

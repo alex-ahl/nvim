@@ -13,7 +13,24 @@ return {
         roslynator_enabled = true, -- Automatically enable roslynator analyzer
         easy_dotnet_analyzer_enabled = true, -- Enable roslyn analyzer from easy-dotnet-server
         analyzer_assemblies = {}, -- Any additional roslyn analyzers you might use like SonarAnalyzer.CSharp
-        config = {},
+        config = {
+          settings = {
+            ['csharp|inlay_hints'] = {
+              csharp_enable_inlay_hints_for_implicit_object_creation = true,
+              csharp_enable_inlay_hints_for_implicit_variable_types = true,
+              csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+              csharp_enable_inlay_hints_for_types = true,
+              dotnet_enable_inlay_hints_for_indexer_parameters = true,
+              dotnet_enable_inlay_hints_for_literal_parameters = true,
+              dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+              dotnet_enable_inlay_hints_for_other_parameters = true,
+              dotnet_enable_inlay_hints_for_parameters = true,
+              dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+              dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+              dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
+            },
+          },
+        },
       },
       debugger = {
         -- Path to custom coreclr DAP adapter
@@ -138,14 +155,14 @@ return {
       },
     }
 
-    -- Example command
-    vim.api.nvim_create_user_command('Secrets', function()
-      dotnet.secrets()
-    end, {})
-
-    -- Example keybinding
-    vim.keymap.set('n', '<C-p>', function()
-      dotnet.run_project()
-    end)
+    vim.keymap.set('n', '<leader>dr', '<cmd>Dotnet run<cr>', { desc = 'Dotnet [r]un' })
+    vim.keymap.set('n', '<leader>db', '<cmd>Dotnet build<cr>', { desc = 'Dotnet [b]uild' })
+    vim.keymap.set('n', '<leader>dt', '<cmd>Dotnet test<cr>', { desc = 'Dotnet [t]est' })
+    vim.keymap.set('n', '<leader>dR', '<cmd>Dotnet restore<cr>', { desc = 'Dotnet [R]estore' })
+    vim.keymap.set('n', '<leader>ds', '<cmd>Dotnet secrets<cr>', { desc = 'Dotnet [s]ecrets' })
+    vim.keymap.set('n', '<leader>dT', '<cmd>Dotnet testrunner<cr>', { desc = 'Dotnet [T]est runner' })
+    vim.keymap.set('n', '<leader>dd', '<cmd>Dotnet debug<cr>', { desc = 'Dotnet [d]ebug' })
+    vim.keymap.set('n', '<leader>dl', '<cmd>Dotnet lsp restart<cr>', { desc = 'Dotnet [l]sp restart' })
+    vim.keymap.set('n', '<leader>dL', '<cmd>Dotnet lsp stop<cr>', { desc = 'Dotnet [L]sp stop' })
   end,
 }
