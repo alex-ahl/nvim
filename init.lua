@@ -5,8 +5,12 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- Exclude temp/decompiled files from shada (oldfiles/MRU)
+vim.opt.shada = { "'100", "<50", "s10", "h", "r/private/var/folders", "rMetadataAsSource" }
+
 vim.opt.number = true
 vim.opt.relativenumber = false
+vim.opt.wrap = false
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -105,7 +109,7 @@ vim.keymap.set('n', '<leader>cl', function()
 end)
 
 --- Close diffview or similar
-vim.keymap.set('n', '<leader>q', function()
+vim.keymap.set('n', '<leader>x', function()
   -- Only try to close if there's more than one window open
   if #vim.api.nvim_tabpage_list_wins(0) > 1 then
     vim.cmd 'wincmd p | close'
@@ -125,6 +129,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -198,10 +203,16 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>s', group = '[S]earch' },
-        -- { '<leader>w', group = '[W]orkspace' },
-        { '<leader>t', group = '[T]oggle' },
+        { 'gr', group = 'LSP [G]oto/[R]efactor' },
+        { '<leader>a', group = '[A]I/Claude' },
+        { '<leader>d', group = '[D]otnet' },
+        { '<leader>g', group = '[G]it' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>j', group = '[J]son' },
+        { '<leader>q', group = 'Session' },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>t', group = '[T]oggle' },
+        { '<leader>w', group = '[W]orkspace' },
       },
     },
   },
@@ -239,6 +250,7 @@ require('lazy').setup({
     config = function()
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
+        -- path_display = { 'tail' },
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         -- defaults = {
@@ -323,7 +335,6 @@ require('lazy').setup({
         config = function()
           require('mason').setup {
             registries = {
-              'github:Crashdummyy/mason-registry',
               'github:mason-org/mason-registry',
             },
           }
@@ -331,9 +342,8 @@ require('lazy').setup({
       },
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
-      --    'seblyng/roslyn.nvim',
       -- Useful status updates for LSP.
-      -- { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
