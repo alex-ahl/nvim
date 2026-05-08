@@ -258,7 +258,17 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        -- pickers = {}
+        pickers = {
+          find_files = {
+            -- show dotfiles; gitignore still applies (override .env via ~/.ignore)
+            hidden = true,
+          },
+          live_grep = {
+            additional_args = function()
+              return { '--hidden' }
+            end,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -490,7 +500,6 @@ require('lazy').setup({
         dockerls = {},
         dotls = {},
         jsonls = {},
-        postgrestools = {},
         sqlls = {},
         terraformls = {},
         yamlls = {},
