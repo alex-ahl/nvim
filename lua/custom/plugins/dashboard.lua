@@ -1,7 +1,45 @@
+-- Dashboard records every LSP client's root_dir on VimLeavePre into
+-- ~/.cache/nvim/dashboard/cache. Roslyn's go-to-definition on compiled
+-- assemblies opens a temp "MetadataAsSource" file and registers its dir as
+-- a root, which then shows up as a "project". Strip those before dashboard
+-- reads the cache.
+local function clean_project_cache()
+  local path = vim.fn.stdpath 'cache' .. '/dashboard/cache'
+  local f = io.open(path, 'r')
+  if not f then
+    return
+  end
+  local data = f:read '*a'
+  f:close()
+  local fn = loadstring(data)
+  if not fn then
+    return
+  end
+  local ok, list = pcall(fn)
+  if not ok or type(list) ~= 'table' then
+    return
+  end
+  local filtered = {}
+  for _, p in ipairs(list) do
+    if not p:match '/private/var/folders' and not p:match 'MetadataAsSource' then
+      table.insert(filtered, p)
+    end
+  end
+  if #filtered == #list then
+    return
+  end
+  local out = io.open(path, 'w')
+  if out then
+    out:write('return ' .. vim.inspect(filtered))
+    out:close()
+  end
+end
+
 return {
   'nvimdev/dashboard-nvim',
   event = 'VimEnter',
   dependencies = { 'nvim-tree/nvim-web-devicons' },
+  init = clean_project_cache,
   opts = {
     theme = 'hyper',
     config = {
