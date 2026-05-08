@@ -737,29 +737,49 @@ require('lazy').setup({
     end,
   },
   { -- Highlight, edit, and navigate code
+    -- Migrated to the `main` branch (rewrite). See :h nvim-treesitter.
+    -- Requires Neovim 0.12+, tree-sitter CLI >= 0.26.1, and a C compiler.
     'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    lazy = false, -- main branch does not support lazy-loading
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-    opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
-      indent = { enable = true, disable = { 'ruby' } },
-    },
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+    config = function()
+      require('nvim-treesitter').setup {
+        install_dir = vim.fn.stdpath 'data' .. '/site',
+      }
+
+      local ensure_installed = {
+        'bash',
+        'c',
+        'c_sharp',
+        'css',
+        'diff',
+        'html',
+        'javascript',
+        'json',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'toml',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+        'yaml',
+      }
+      require('nvim-treesitter').install(ensure_installed)
+
+      -- Highlighting and indent are no longer auto-enabled by `setup`.
+      -- Start treesitter for any filetype that has a parser; ignore filetypes that don't.
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(ev)
+          pcall(vim.treesitter.start, ev.buf)
+          vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
+      })
+    end,
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
