@@ -11,7 +11,7 @@ return {
     -- "nvim-mini/mini.pick",           -- optional
     -- "folke/snacks.nvim",             -- optional
   },
-  config = {
+  opts = {
     integrations = {
       diffview = true,
     },

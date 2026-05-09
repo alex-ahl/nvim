@@ -5,6 +5,22 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- Disable unused language providers (silences :checkhealth vim.provider warnings).
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_node_provider = 0
+
+-- Tag compose files with the compound filetype so docker_compose_language_service attaches.
+vim.filetype.add {
+  filename = {
+    ['docker-compose.yml'] = 'yaml.docker-compose',
+    ['docker-compose.yaml'] = 'yaml.docker-compose',
+    ['compose.yml'] = 'yaml.docker-compose',
+    ['compose.yaml'] = 'yaml.docker-compose',
+  },
+}
+
 -- Exclude temp/decompiled files from shada (oldfiles/MRU)
 vim.opt.shada = { "'100", "<50", "s10", "h", "r/private/var/folders", "rMetadataAsSource" }
 
@@ -204,7 +220,6 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { 'gr', group = 'LSP [G]oto/[R]efactor' },
-        { '<leader>a', group = '[A]I/Claude' },
         { '<leader>d', group = '[D]otnet' },
         { '<leader>g', group = '[G]it' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
@@ -502,7 +517,7 @@ require('lazy').setup({
         jsonls = {},
         sqlls = {},
         terraformls = {},
-        yamlls = {},
+        yamlls = { filetypes = { 'yaml', 'yaml.docker-compose' } },
         ts_ls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 
@@ -662,9 +677,16 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev', 'easy-dotnet' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          -- NuGet package-name autocomplete inside .csproj/.fsproj files.
+          ['easy-dotnet'] = {
+            name = 'easy-dotnet',
+            module = 'easy-dotnet.completion.blink',
+            score_offset = 10000,
+            async = true,
+          },
         },
       },
 
@@ -773,10 +795,15 @@ require('lazy').setup({
 
       -- Highlighting and indent are no longer auto-enabled by `setup`.
       -- Start treesitter for any filetype that has a parser; ignore filetypes that don't.
+      -- Only set the TS indentexpr when the language actually has an indents query —
+      -- otherwise we silently disable Vim's default indent (e.g. C# breaks without this guard).
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(ev)
           pcall(vim.treesitter.start, ev.buf)
-          vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
+          if lang and vim.treesitter.query.get(lang, 'indents') then
+            vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
         end,
       })
     end,
@@ -809,6 +836,9 @@ require('lazy').setup({
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
+  -- No plugins in this config require luarocks; disable rocks support entirely
+  -- to silence the luarocks / lua 5.1 not installed health warnings.
+  rocks = { enabled = false },
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
