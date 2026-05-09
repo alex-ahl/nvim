@@ -268,11 +268,10 @@ require('lazy').setup({
         -- path_display = { 'tail' },
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          -- `.git/` isn't covered by gitignore, so `hidden = true` would otherwise expose it.
+          file_ignore_patterns = { '^%.git/', '/%.git/' },
+        },
         pickers = {
           find_files = {
             -- show dotfiles; gitignore still applies (override .env via ~/.ignore)
