@@ -46,9 +46,12 @@ return { -- Useful plugin to show you pending keybinds.
     spec = {
       { 'gr', group = 'LSP [G]oto/[R]efactor' },
       { '<leader>d', group = '[D]otnet' },
+      { '<leader>e', group = '[E]rrors/Trouble' },
       { '<leader>g', group = '[G]it' },
+      { '<leader>m', group = '[M]inimap' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       { '<leader>j', group = '[J]son' },
+      { '<leader>o', group = '[O]cto/GitHub' },
       { '<leader>q', group = 'Session' },
       { '<leader>s', group = '[S]earch' },
       { '<leader>t', group = '[T]oggle' },
