@@ -23,6 +23,7 @@ return {
     },
     { '<leader>or', '<cmd>Octo review start<cr>', desc = 'Start PR Review' },
     { '<leader>oR', '<cmd>Octo review submit<cr>', desc = 'Submit PR Review' },
+    { '<leader>oC', '<cmd>Octo pr checkout<cr>', desc = 'Checkout PR' },
   },
   dependencies = {
     'nvim-lua/plenary.nvim',

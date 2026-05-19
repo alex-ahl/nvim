@@ -86,6 +86,10 @@ return {
           --  the definition of its *type*, not where it was *defined*.
           map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
+          -- Signature help in normal and insert mode.
+          map('grs', vim.lsp.buf.signature_help, '[S]ignature Help')
+          map('<C-s>', vim.lsp.buf.signature_help, '[S]ignature Help', 'i')
+
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
           ---@param method vim.lsp.protocol.Method
@@ -221,6 +225,11 @@ return {
           end,
         },
       }
+
+      -- Global LSP maps (work in any buffer, not gated by LspAttach).
+      vim.keymap.set('n', 'grR', '<cmd>LspRestart<cr>', { desc = 'LSP: [R]estart servers' })
+      vim.keymap.set('n', 'grI', '<cmd>LspInfo<cr>', { desc = 'LSP: [I]nfo' })
+      vim.keymap.set('n', 'gre', vim.diagnostic.open_float, { desc = 'LSP: Diagnostic [e]xpand (float)' })
     end,
   },
 }
