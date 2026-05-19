@@ -88,5 +88,29 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader>sn', function()
       builtin.find_files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })
+
+    -- Peek into another project: prompt for a directory, then search there.
+    local function pick_in_dir(picker, label)
+      vim.ui.input({ prompt = label .. ' in dir: ', completion = 'dir', default = '~/' }, function(input)
+        if not input or input == '' then
+          return
+        end
+        local cwd = vim.fn.fnamemodify(vim.fn.expand(input), ':p')
+        if vim.fn.isdirectory(cwd) == 0 then
+          vim.notify('Not a directory: ' .. cwd, vim.log.levels.ERROR)
+          return
+        end
+        vim.schedule(function()
+          picker { cwd = cwd, prompt_title = label .. ' — ' .. cwd }
+        end)
+      end)
+    end
+
+    vim.keymap.set('n', '<leader>sp', function()
+      pick_in_dir(builtin.find_files, 'Find files')
+    end, { desc = '[S]earch files in [P]roject (prompt)' })
+    vim.keymap.set('n', '<leader>sP', function()
+      pick_in_dir(builtin.live_grep, 'Live grep')
+    end, { desc = '[S]earch grep in [P]roject (prompt)' })
   end,
 }
