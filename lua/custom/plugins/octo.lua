@@ -22,7 +22,9 @@ return {
       desc = "Open current branch's PR",
     },
     { '<leader>or', '<cmd>Octo review start<cr>', desc = 'Start PR Review' },
+    { '<leader>oe', '<cmd>Octo review resume<cr>', desc = 'Resume PR Review' },
     { '<leader>oR', '<cmd>Octo review submit<cr>', desc = 'Submit PR Review' },
+    { '<leader>od', '<cmd>Octo review discard<cr>', desc = 'Discard PR Review' },
     { '<leader>oC', '<cmd>Octo pr checkout<cr>', desc = 'Checkout PR' },
   },
   dependencies = {
