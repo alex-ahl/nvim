@@ -89,33 +89,6 @@ return {
           prefix = 'sln', -- "sln" | "none"
         },
       },
-      ---@param action "test" | "restore" | "build" | "run"
-      terminal = function(path, action, args)
-        args = args or ''
-        local commands = {
-          run = function()
-            return string.format('dotnet run --project %s %s', path, args)
-          end,
-          test = function()
-            return string.format('dotnet test %s %s', path, args)
-          end,
-          restore = function()
-            return string.format('dotnet restore %s %s', path, args)
-          end,
-          build = function()
-            return string.format('dotnet build %s %s', path, args)
-          end,
-          watch = function()
-            return string.format('dotnet watch --project %s %s', path, args)
-          end,
-        }
-        local command = commands[action]()
-        if require('easy-dotnet.extensions').isWindows() == true then
-          command = command .. '\r'
-        end
-        vim.cmd 'vsplit'
-        vim.cmd('term ' .. command)
-      end,
       csproj_mappings = true,
       fsproj_mappings = true,
       auto_bootstrap_namespace = {
@@ -150,8 +123,8 @@ return {
         end,
       },
       diagnostics = {
-        default_severity = 'error',
-        setqflist = false,
+        default_severity = 'warning',
+        setqflist = true,
       },
     }
 
@@ -164,5 +137,18 @@ return {
     vim.keymap.set('n', '<leader>dd', '<cmd>Dotnet debug<cr>', { desc = 'Dotnet [d]ebug' })
     vim.keymap.set('n', '<leader>dl', '<cmd>Dotnet lsp restart<cr>', { desc = 'Dotnet [l]sp restart' })
     vim.keymap.set('n', '<leader>dL', '<cmd>Dotnet lsp stop<cr>', { desc = 'Dotnet [L]sp stop' })
+    local function scan(severity, desc)
+      return function()
+        vim.cmd('Dotnet diagnostic ' .. severity)
+        vim.api.nvim_create_autocmd('FileType', {
+          pattern = 'qf',
+          once = true,
+          callback = function() vim.schedule(function() vim.cmd 'cclose' end) end,
+          desc = desc,
+        })
+      end
+    end
+    vim.keymap.set('n', '<leader>dw', scan('warnings', 'auto-close qf after dotnet warnings scan'), { desc = 'Dotnet scan [w]arnings (sln)' })
+    vim.keymap.set('n', '<leader>dx', scan('errors', 'auto-close qf after dotnet errors scan'), { desc = 'Dotnet scan errors (sln)' })
   end,
 }
