@@ -23,12 +23,13 @@ vim.api.nvim_create_autocmd('FileType', {
   callback = function(args)
     -- The commit buffer IS <gitdir>/COMMIT_EDITMSG, so its own directory is the
     -- git dir — correct inside linked worktrees too, where .git is a file and
-    -- the real dir is .git/worktrees/<name>.
-    local gitdir = vim.fn.expand '%:p:h'
-    if gitdir == '' then
+    -- the real dir is .git/worktrees/<name>. Read the name off args.buf, not '%':
+    -- neogit sets the filetype before the buffer is the current one.
+    local name = vim.api.nvim_buf_get_name(args.buf)
+    if name == '' then
       return
     end
-    local draft = gitdir .. '/COMMIT_DRAFT'
+    local draft = vim.fn.fnamemodify(name, ':p:h') .. '/COMMIT_DRAFT'
     if vim.fn.filereadable(draft) == 0 then
       return
     end
@@ -46,6 +47,8 @@ vim.api.nvim_create_autocmd('FileType', {
     end
     vim.api.nvim_buf_set_lines(args.buf, 0, 0, false, lines)
     vim.fn.delete(draft)
-    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    if vim.api.nvim_get_current_buf() == args.buf then
+      vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    end
   end,
 })
