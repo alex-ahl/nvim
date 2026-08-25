@@ -13,23 +13,19 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Pull an agent-drafted commit message into the commit buffer.
--- An agent stages a commit and writes its message to <gitdir>/COMMIT_DRAFT;
+-- An agent stages a commit and writes its message to ~/brain/COMMIT_DRAFT;
 -- this reads it in and deletes it, so a stale draft can never leak into an
 -- unrelated commit. Only fires when the buffer holds nothing but comments.
+--
+-- Outside the git dir on purpose: agents are commonly barred from writing
+-- inside .git, and ~/brain is already their write path. One shared file is
+-- enough — commits are prepared one at a time and the draft is consumed here.
 vim.api.nvim_create_autocmd('FileType', {
-  desc = 'Insert .git/COMMIT_DRAFT into an empty commit message',
+  desc = 'Insert ~/brain/COMMIT_DRAFT into an empty commit message',
   pattern = 'gitcommit',
   group = vim.api.nvim_create_augroup('commit-draft', { clear = true }),
   callback = function(args)
-    -- The commit buffer IS <gitdir>/COMMIT_EDITMSG, so its own directory is the
-    -- git dir — correct inside linked worktrees too, where .git is a file and
-    -- the real dir is .git/worktrees/<name>. Read the name off args.buf, not '%':
-    -- neogit sets the filetype before the buffer is the current one.
-    local name = vim.api.nvim_buf_get_name(args.buf)
-    if name == '' then
-      return
-    end
-    local draft = vim.fn.fnamemodify(name, ':p:h') .. '/COMMIT_DRAFT'
+    local draft = vim.fn.expand '~/brain/COMMIT_DRAFT'
     if vim.fn.filereadable(draft) == 0 then
       return
     end
