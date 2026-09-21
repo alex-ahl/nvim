@@ -3,7 +3,7 @@ return {
   cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
   keys = {
     { '<leader>gd', '<cmd>DiffviewOpen<cr>', desc = 'Diffview Open' },
-    { '<leader>gh', '<cmd>DiffviewFileHistory %<cr>', desc = 'Diffview File History' },
+    { '<leader>gl', '<cmd>DiffviewFileHistory %<cr>', desc = 'Diffview file history ([l]og)' },
     { '<leader>gq', '<cmd>DiffviewClose<cr>', desc = 'Diffview Close' },
     {
       '<leader>gP',
