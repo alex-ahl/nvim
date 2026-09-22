@@ -227,8 +227,9 @@ return {
       }
 
       -- Global LSP maps (work in any buffer, not gated by LspAttach).
-      vim.keymap.set('n', 'grR', '<cmd>LspRestart<cr>', { desc = 'LSP: [R]estart servers' })
-      vim.keymap.set('n', 'grI', '<cmd>LspInfo<cr>', { desc = 'LSP: [I]nfo' })
+      -- Nvim 0.12 ships `:lsp`, which makes nvim-lspconfig skip defining `:Lsp*`.
+      vim.keymap.set('n', 'grR', '<cmd>lsp restart<cr>', { desc = 'LSP: [R]estart servers' })
+      vim.keymap.set('n', 'grI', '<cmd>checkhealth vim.lsp<cr>', { desc = 'LSP: [I]nfo' })
       vim.keymap.set('n', 'gre', vim.diagnostic.open_float, { desc = 'LSP: Diagnostic [e]xpand (float)' })
     end,
   },
