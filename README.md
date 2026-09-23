@@ -5,10 +5,9 @@ Docker/Compose, SQL, JSON/YAML. Lua, `lazy.nvim`, one file per plugin.
 
 ## Requires
 
-- **Neovim 0.12+** — `grR` calls the built-in `:lsp` command, which does not exist earlier.
-- **git**, **make** and a C compiler — `lazy.nvim` bootstraps itself, and `telescope-fzf-native`
-  and LuaSnip build native components.
-- A **Nerd Font** in the terminal (`vim.g.have_nerd_font` is on; icons degrade without it).
+- **Neovim 0.12+**
+- **git**, **make** and a C compiler
+- A **Nerd Font** in the terminal
 
 Optional, per feature:
 
@@ -20,8 +19,8 @@ Optional, per feature:
 | `dotnet` | easy-dotnet |
 | `imagemagick` + a terminal speaking the Kitty graphics protocol | image.nvim |
 
-Mason installs the language servers and `stylua` on first run. C# is the exception --
-its Roslyn server comes from easy-dotnet, not Mason.
+Mason installs the language servers and `stylua` on first run. C#'s Roslyn server comes
+from easy-dotnet instead.
 
 ## Install
 
@@ -43,8 +42,8 @@ lua/config/autocmds.lua   autocommands
 lua/custom/plugins/*.lua  one file per plugin, imported as a directory
 ```
 
-Adding a plugin means adding a file — `lazy.setup` imports the whole `custom.plugins`
-directory, so nothing else needs touching.
+Adding a plugin means adding a file; `lazy.setup` imports the whole `custom.plugins`
+directory.
 
 ## Keymaps
 
@@ -63,13 +62,9 @@ Leader is `<Space>`. `which-key` shows every group; the prefixes are:
 | `<leader>t` | Toggles |
 | `gr*` | LSP — mostly Neovim's own defaults, plus `grR` restart and `grI` health |
 
-Git keys live under one prefix on purpose: hunk actions are buffer-local, so `<leader>g` shows
-fewer entries outside a git-tracked file.
+Hunk actions are buffer-local, so `<leader>gh` is empty outside a git-tracked file.
 
 ## Notes
 
-- **Mason owns the toolchain.** Servers are declared in `lspconfig.lua`; `mason-tool-installer`
-  installs whatever that table names.
 - **Formatting is `conform.nvim`**, not the LSP. Only `stylua` is wired up so far.
-- **No luarocks.** `rocks` is disabled in `lazy.setup` to silence the Lua 5.1 health warnings;
-  image.nvim uses the `magick` CLI rather than the luarock.
+- **No luarocks.** `rocks` is disabled in `lazy.setup`; image.nvim uses the `magick` CLI.
