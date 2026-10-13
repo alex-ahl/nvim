@@ -30,6 +30,9 @@ return {
           'obj',
           'bin',
         },
+        always_show = {
+          'private',
+        },
         always_show_by_pattern = { -- uses glob style patterns
           '.env*',
           'Directory.Build.props',
