@@ -188,6 +188,8 @@ return {
         terraformls = {},
         yamlls = { filetypes = { 'yaml', 'yaml.docker-compose' } },
         ts_ls = {},
+        basedpyright = {},
+        ruff = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 
         lua_ls = {
