@@ -35,6 +35,7 @@ return {
         },
         always_show_by_pattern = { -- uses glob style patterns
           '.env*',
+          '*/private/*', -- private's contents are gitignored too, not just the dir
           'Directory.Build.props',
         },
       },
