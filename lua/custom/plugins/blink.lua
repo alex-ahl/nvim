@@ -81,7 +81,9 @@ return { -- Autocompletion
     },
 
     sources = {
-      default = { 'lsp', 'path', 'snippets', 'lazydev', 'easy-dotnet' },
+      default = { 'lsp', 'path', 'snippets', 'lazydev' },
+      -- Scoped so its module (and so easy-dotnet itself) isn't required in every buffer.
+      per_filetype = { xml = { inherit_defaults = true, 'easy-dotnet' } },
       providers = {
         lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
         -- NuGet package-name autocomplete inside .csproj/.fsproj files.

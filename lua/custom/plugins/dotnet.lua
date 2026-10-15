@@ -4,6 +4,36 @@ return {
   -- 'nvim-telescope/telescope.nvim' or 'ibhagwan/fzf-lua' or 'folke/snacks.nvim'
   -- are highly recommended for a better experience
   dependencies = { 'nvim-lua/plenary.nvim', 'mfussenegger/nvim-dap', 'nvim-telescope/telescope.nvim' },
+  -- Project files are filetype xml; match by name so any xml doesn't load it.
+  ft = { 'cs', 'fsharp', 'solution' },
+  event = { 'BufReadPre *.csproj', 'BufReadPre *.fsproj', 'BufReadPre *.slnx', 'BufReadPre *.props' },
+  cmd = 'Dotnet',
+  keys = function()
+    local function scan(severity, desc)
+      return function()
+        vim.cmd('Dotnet diagnostic ' .. severity)
+        vim.api.nvim_create_autocmd('FileType', {
+          pattern = 'qf',
+          once = true,
+          callback = function() vim.schedule(function() vim.cmd 'cclose' end) end,
+          desc = desc,
+        })
+      end
+    end
+    return {
+      { '<leader>dr', '<cmd>Dotnet run<cr>', desc = 'Dotnet [r]un' },
+      { '<leader>db', '<cmd>Dotnet build<cr>', desc = 'Dotnet [b]uild' },
+      { '<leader>dt', '<cmd>Dotnet test<cr>', desc = 'Dotnet [t]est' },
+      { '<leader>dR', '<cmd>Dotnet restore<cr>', desc = 'Dotnet [R]estore' },
+      { '<leader>ds', '<cmd>Dotnet secrets<cr>', desc = 'Dotnet [s]ecrets' },
+      { '<leader>dT', '<cmd>Dotnet testrunner<cr>', desc = 'Dotnet [T]est runner' },
+      { '<leader>dd', '<cmd>Dotnet debug<cr>', desc = 'Dotnet [d]ebug' },
+      { '<leader>dl', '<cmd>Dotnet lsp restart<cr>', desc = 'Dotnet [l]sp restart' },
+      { '<leader>dL', '<cmd>Dotnet lsp stop<cr>', desc = 'Dotnet [L]sp stop' },
+      { '<leader>dw', scan('warnings', 'auto-close qf after dotnet warnings scan'), desc = 'Dotnet scan [w]arnings (sln)' },
+      { '<leader>dx', scan('errors', 'auto-close qf after dotnet errors scan'), desc = 'Dotnet scan errors (sln)' },
+    }
+  end,
   config = function()
     local dotnet = require 'easy-dotnet'
     -- Options are not required
@@ -127,28 +157,5 @@ return {
         setqflist = true,
       },
     }
-
-    vim.keymap.set('n', '<leader>dr', '<cmd>Dotnet run<cr>', { desc = 'Dotnet [r]un' })
-    vim.keymap.set('n', '<leader>db', '<cmd>Dotnet build<cr>', { desc = 'Dotnet [b]uild' })
-    vim.keymap.set('n', '<leader>dt', '<cmd>Dotnet test<cr>', { desc = 'Dotnet [t]est' })
-    vim.keymap.set('n', '<leader>dR', '<cmd>Dotnet restore<cr>', { desc = 'Dotnet [R]estore' })
-    vim.keymap.set('n', '<leader>ds', '<cmd>Dotnet secrets<cr>', { desc = 'Dotnet [s]ecrets' })
-    vim.keymap.set('n', '<leader>dT', '<cmd>Dotnet testrunner<cr>', { desc = 'Dotnet [T]est runner' })
-    vim.keymap.set('n', '<leader>dd', '<cmd>Dotnet debug<cr>', { desc = 'Dotnet [d]ebug' })
-    vim.keymap.set('n', '<leader>dl', '<cmd>Dotnet lsp restart<cr>', { desc = 'Dotnet [l]sp restart' })
-    vim.keymap.set('n', '<leader>dL', '<cmd>Dotnet lsp stop<cr>', { desc = 'Dotnet [L]sp stop' })
-    local function scan(severity, desc)
-      return function()
-        vim.cmd('Dotnet diagnostic ' .. severity)
-        vim.api.nvim_create_autocmd('FileType', {
-          pattern = 'qf',
-          once = true,
-          callback = function() vim.schedule(function() vim.cmd 'cclose' end) end,
-          desc = desc,
-        })
-      end
-    end
-    vim.keymap.set('n', '<leader>dw', scan('warnings', 'auto-close qf after dotnet warnings scan'), { desc = 'Dotnet scan [w]arnings (sln)' })
-    vim.keymap.set('n', '<leader>dx', scan('errors', 'auto-close qf after dotnet errors scan'), { desc = 'Dotnet scan errors (sln)' })
   end,
 }
