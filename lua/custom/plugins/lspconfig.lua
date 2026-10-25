@@ -228,6 +228,33 @@ return {
         },
       }
 
+      -- The project's TypeScript major version, or nil when it has none installed.
+      local function typescript_major(root)
+        local path = vim.fs.joinpath(root, 'node_modules/typescript/package.json')
+        local ok, lines = pcall(vim.fn.readfile, path)
+        if not ok then
+          return nil
+        end
+
+        local version = vim.version.parse(vim.json.decode(table.concat(lines, '\n')).version)
+        return version and version.major
+      end
+
+      -- TypeScript 7+ projects are served by `tsc`; ts_ls takes the rest. Wraps the
+      -- upstream root_dir to keep its Deno detection and root markers.
+      local ts_ls_root_dir = vim.lsp.config.ts_ls.root_dir
+      vim.lsp.config('ts_ls', {
+        root_dir = function(bufnr, on_dir)
+          ts_ls_root_dir(bufnr, function(root)
+            if (typescript_major(root) or 0) < 7 then
+              on_dir(root)
+            end
+          end)
+        end,
+      })
+
+      vim.lsp.enable { 'ts_ls', 'tsc' }
+
       -- Global LSP maps (work in any buffer, not gated by LspAttach).
       -- Nvim 0.12 ships `:lsp`, which makes nvim-lspconfig skip defining `:Lsp*`.
       vim.keymap.set('n', 'grR', '<cmd>lsp restart<cr>', { desc = 'LSP: [R]estart servers' })
