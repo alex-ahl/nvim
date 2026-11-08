@@ -56,6 +56,9 @@ return {
         '',
       },
       week_header = { enable = false },
+      -- Inside a repo, stick to it: no project list, recent files from here only.
+      project = { enable = vim.fs.root(vim.fn.getcwd(), '.git') == nil },
+      mru = { cwd_only = true },
       shortcut = {
         { desc = ' Find File', group = 'Label', action = 'Telescope find_files', key = 'f' },
         { desc = ' New File', group = 'Label', action = 'ene | startinsert', key = 'n' },
