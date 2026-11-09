@@ -10,6 +10,37 @@ return {
     'MunifTanjim/nui.nvim',
   },
   cmd = 'Neotree',
+  init = function()
+    -- Show the tree, without taking focus, once the first real file is open.
+    -- Started without arguments, that is after leaving the dashboard.
+    local function is_file(buf)
+      return vim.bo[buf].buftype == '' and vim.api.nvim_buf_get_name(buf) ~= ''
+    end
+    local function show()
+      if vim.o.diff or vim.tbl_contains({ 'gitcommit', 'gitrebase' }, vim.bo.filetype) then
+        return
+      end
+      vim.cmd 'Neotree show'
+    end
+    vim.api.nvim_create_autocmd('VimEnter', {
+      once = true,
+      callback = function()
+        if is_file(0) then
+          vim.schedule(show)
+          return
+        end
+        vim.api.nvim_create_autocmd('BufEnter', {
+          callback = function(ev)
+            if not is_file(ev.buf) then
+              return
+            end
+            vim.schedule(show)
+            return true -- delete this autocmd
+          end,
+        })
+      end,
+    })
+  end,
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
   },
