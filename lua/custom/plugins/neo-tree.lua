@@ -42,7 +42,7 @@ return {
     })
   end,
   keys = {
-    { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '\\', ':Neotree reveal_force_cwd<CR>', desc = 'NeoTree reveal', silent = true },
   },
   opts = {
     filesystem = {
